@@ -3,7 +3,7 @@ Example project repository for MATH 261A.
 
 ## Data 
 
-Data used in this project is obtained from the [California Open Data Portal](https://data.ca.gov/dataset/city-expenditures-per-capitaa) who provide the data under the [Creative Commons Attribution 4 License](https://creativecommons.org/licenses/by/4.0/legalcode).
+Data used in this project is obtained from the [California Open Data Portal](https://data.ca.gov/dataset/city-expenditures-per-capita) who provide the data under the [Creative Commons Attribution 4 License](https://creativecommons.org/licenses/by/4.0/legalcode).
 
 ## External Resources
 
