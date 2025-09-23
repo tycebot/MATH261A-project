@@ -8,6 +8,7 @@ date-format: long
 abstract: "California's rising government debt over the past decade necessitates careful examination of municipal spending efficiency. To analyze spending efficiency I use data on expenditure per capita for all california cities over the past 20 years. I use regression analysis to model the relationship between population size(the predictor) and per capita spending(the response varible). Then hypothesis testing is used on the slope to determine whether large cities benefit from economies of scale. The results were FILL THIS IN which is significant because FILL THIS IN."
 format: pdf
 bibliography: references.bib
+number-sections: true
 ---
 
 ```{r}
@@ -19,33 +20,50 @@ library(tidyverse)
 library(palmerpenguins)
 ```
 
-# Introduction
-
-# Data
-Each observation in this dataset represents the expenditure per capita of a particular city in California at the end of a fiscal year. The key variables are entity name which is the name of the city,fiscal year(July 1 of the current year to June 30 of the next year) which is the year for which each expenditure per capita is calculated ,total expenditure which is the gross expenditure of a particular city over the fiscal year, estimated population which is the population of the city based on the Housing Unit Method which extrapolates population by taking housing units adjusting for occupation and then using that to estimate household population then combining that with estimates for "group quarters population"(essentially everyone in nontraditional households like dorms and prisons) to get the overall population estimate(more details in reference),and expenditures per capita which is the total expenditures divided by estimated population.The data is grouped by city,year, as well as binned into three groups for large medium and small sized cities.The limitations for the dataset are as follows the estimated population does a bad job of measuring homeless because of it's reliance on housing units,the years are limited to a twenty year period from 2003 to 2023,the estimated population can double count those that move until they register their new address, and the expenditures measures are both skewed over the covid period (2020-2023). None of the records are missing. By analyzing how much money is spent by a city over an extended period of time for a cities with a variety of different populations we can reasonably ascertain the relationship between expenditure and the population. However the key assumptions are that the population measurement is accurate relative to other cities in the dataset(meaning if it underestimates or overestimates the population then it does it consistently) and that the cities are correctly reporting their expenditures to the state.
-
-per capita expenditure visualizations
 ```{r}
+#Cleaning Dataset
+expenditure<-read.csv(file = "City_Expenditures_Per_Capita.csv")
+```
+# Introduction
+The motivation for this paper comes primarily from two sources. First seeing the rise in government expenditure and subsequent increase in debt prompted me to look into what lead to the increase in expenditure and how to make it more efficient.When looking into government expenditure I found a paper which discovered that cities in Portugal experienced economy of scales in their larger cities [CITATION] which prompted me to think if those same efficiencies exist in California. Some useful background on California state expenditure is that over the period from 2019 to 2024 state expenditure increased from around 300 billion to 494 billion. It currently is on pace to surpass to peak covid spending in 2021(499 billion) by the end of the year[CITATION] which is why examining how efficiently this money is being spent is so important.
+
+The knowledge gap being addressed is that of understanding the relationship between population and expenditure on the city level in the United States. Particularly for California there is no analysis on population as a mechanisms driving city spending in California. Most of the analysis focuses on a subset of expenditure (like health care or education). What this paper looks to do is examine expenditure on the more granular city level with the hope that by finding efficiencies on the city level they transfer to the state level. In order to address the knowledge gap the simple linear regression model was fit to measure the relationship between estimated population(the predictor) and expenditure per capita(response). Then a one sided hypothesis testing was done on the slope of the regression model to determine whether or not large cities benefit from economies of scale in their spending.
+
+The structure of the the project is divided into four sections @sec-data,@sec-methods,@sec-results, and @sec-references. @sec-data introduces the data used in this analysis including limitations,definitions, and why it's important.@sec-methods explains the statistical methods used for the analysis.@sec-results discusses the results of the analysis as well as what can be gleaned from these results and what are the restrictions. Finally @sec-references contains the citations for any external sources used in the paper.
+
+# Data{#sec-data}
+The California capital expenditure dataset is provided by FIND DATA PROVIDER Each row in this dataset represents the expenditure per capita of a particular city in California at the end of a fiscal year. The key variables are entity name which is the name of the city,fiscal year(July 1 of the current year to June 30 of the next year) which is the year for which each expenditure per capita is calculated ,total expenditure which is the gross expenditure of a particular city over the fiscal year, estimated population which is the population of the city based on the Housing Unit Method which extrapolates population by taking housing units adjusting for occupation and then using that to estimate household population then combining that with estimates for "group quarters population"(essentially everyone in nontraditional households like dorms and prisons) to get the overall population estimate(more details in reference),and expenditures per capita which is the total expenditures divided by estimated population.The data is grouped by city,year, as well as binned into three groups for large medium and small sized cities.The limitations for the dataset are as follows the estimated population does a bad job of measuring homeless because of it's reliance on housing units,the years are limited to a twenty year period from 2003 to 2023,the estimated population can double count those that move until they register their new address, and the expenditures measures are both skewed over the covid period (2020-2023). None of the records are missing. By analyzing how much money is spent by a city over an extended period of time for a cities with a variety of different populations we can reasonably ascertain the relationship between expenditure and the population. However the key assumptions are that the population measurement is accurate relative to other cities in the dataset(meaning if it underestimates or overestimates the population then it does it consistently) and that the cities are correctly reporting their expenditures to the state.
+
+[@tidyv]
+per capita expenditure visualizations
+```{r fig-capita-expenditure}
 
 ```
 
 total expenditure visualizations
-```{r}
+```{r fig-expenditure}
 
 ```
 
 estimated population visualizations
-```{r}
+```{r fig-estimated-population}
 
 ```
 
-# Methods
+# Methods {#sec-methods}
 We adopt a simple linear regression model with expenditure per capita as the response and population as the predictor. Let $Y_i$ denote expenditure per capita and $Y_i$ denote population for the $Y_i$ year in our dataset. The model can be written as 
 $Y_i = \beta_0 + \beta_1 X_i + \epsilon_i$
 where $\beta_0$ represents the expected population when the expenditure is 0,$\beta_1$ represents the average increase in expenditure per capita for every individual added to the population, and $\epsilon_i$ represents the change in expenditure per capita not captured by the  population
 This model is implemented using the lm() function from the R programming language. The lm function is the a function used to create linear models.
-ADD SECTION ON HYPOTHESIS TESTING 
 
-# Results
+In order to evaluate whether or not high population cities get an economy of scales bonus we use a one sided hypothesis test to determine whether there is a negative association between expenditure per capita(($Y$)) and population(($X$)). The null and alternative hypothesis are as follows
+$H_0: B_1=0$
+$H_1: B_1<0$
 
-# References
+
+
+# Results {#sec-results}
+(include graphs question needs for analysis)
+The
+# References {#sec-references}
+
