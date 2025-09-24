@@ -1,7 +1,7 @@
 ---
 title: "Analysis of the relationship between city size and municipal spending efficiency in California cities."
 author: "Terrell Enoru"
-thanks: "Project repository available at: [https://github.com/tycebot/MATH261A-project](https://github.com/tycebot/MATH261A-project)."
+thanks: "Project repository available at:[https://github.com/tycebot/Modeling-population-and-spending](https://github.com/tycebot/Modeling-population-and-spending)."
 date: today
 date-format: long
 abstract: "California's rising government debt over the past decade necessitates careful examination of municipal spending efficiency. To analyze spending efficiency I use data on expenditure per capita for all california cities over the past 20 years. I use regression analysis to model the relationship between population size(the predictor) and per capita spending(the response varible). Then hypothesis testing is used on the slope to determine whether large cities benefit from economies of scale. The results were that there was not enough statistical evidence to claim that expinditure per capita decreased as population increased which is significant because it implies that the continued expansion of large cities like Los Angeles and San Francsico that serve as the State's primary economic growth engine will not result in a less efficient expenditure."
