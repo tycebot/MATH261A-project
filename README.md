@@ -1,5 +1,5 @@
 # Modeling Population and Spending in California Cities
-Author:Terrell Enoru
+Author: Terrell Enoru
 
 Date of Submission: 9/24/2025
 
