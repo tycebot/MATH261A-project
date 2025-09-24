@@ -9,7 +9,7 @@ Data used in this project is obtained from the [California Open Data Portal](htt
 
 ## External Resources
 
-**Example statement:** The final report and code were written by Terrell Enoru, but the following resources were used for preliminary research:
+The final report and code were written by Terrell Enoru, but the following resources were used for preliminary research:
 
 * ai2paper finder(for finding background on topic and knowledge gap)
 * zotero (for producing citations)
