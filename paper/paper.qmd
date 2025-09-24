@@ -18,21 +18,45 @@ number-sections: true
 
 library(tidyverse)
 library(palmerpenguins)
+library(janitor)
 ```
 
 ```{r}
-#Cleaning Dataset
+#Import Dataset
 expenditure<-read.csv(file = "City_Expenditures_Per_Capita.csv")
+
+new_ex<-expenditure |> 
+  group_by(Entity.Name) |> 
+  mutate(across(c("Estimated.Population","Total.Expenditures","Expenditures.Per.Capita"), ~  na_if(.,0))) |>
+  na.omit() |> 
+  count(name='row_count') |> 
+  arrange(desc(row_count)) |> 
+  filter(row_count>18)
+city_filter<-new_ex[["Entity.Name"]]
+
+filtered_expenditure<-expenditure |> 
+  filter(Entity.Name %in% city_filter) |> 
+  filter(Fiscal.Year>2004) |> 
+  group_by(Entity.Name) 
+  
+  
+sum(is.na(filtered_expenditure))
+filtered_expenditure[!complete.cases(filtered_expenditure),]
+
+any(filtered_expenditure)
+  #summarise(avg_expenditure_pc=mean(Expenditures.Per.Capita))
+
+
 ```
 # Introduction
-The motivation for this paper comes primarily from two sources. First seeing the rise in government expenditure and subsequent increase in debt prompted me to look into what lead to the increase in expenditure and how to make it more efficient.When looking into government expenditure I found a paper which discovered that cities in Portugal experienced economy of scales in their larger cities [CITATION] which prompted me to think if those same efficiencies exist in California. Some useful background on California state expenditure is that over the period from 2019 to 2024 state expenditure increased from around 300 billion to 494 billion. It currently is on pace to surpass to peak covid spending in 2021(499 billion) by the end of the year[CITATION] which is why examining how efficiently this money is being spent is so important.
+The motivation for this paper comes primarily from two sources. First seeing the rise in government expenditure and subsequent increase in debt prompted me to look into what lead to the increase in expenditure and how to make it more efficient.When looking into government expenditure I found a paper which discovered that cities in Portugal experienced economy of scales in their larger cities [@CITATION] which prompted me to think if those same efficiencies exist in California. Some useful background on California state expenditure is that over the period from 2019 to 2024 state expenditure increased from around 300 billion to 494 billion. It currently is on pace to surpass to peak covid spending in 2021(499 billion) by the end of the year[@CITATION] which is why examining how efficiently this money is being spent is so important.
 
 The knowledge gap being addressed is that of understanding the relationship between population and expenditure on the city level in the United States. Particularly for California there is no analysis on population as a mechanisms driving city spending in California. Most of the analysis focuses on a subset of expenditure (like health care or education). What this paper looks to do is examine expenditure on the more granular city level with the hope that by finding efficiencies on the city level they transfer to the state level. In order to address the knowledge gap the simple linear regression model was fit to measure the relationship between estimated population(the predictor) and expenditure per capita(response). Then a one sided hypothesis testing was done on the slope of the regression model to determine whether or not large cities benefit from economies of scale in their spending.
 
 The structure of the the project is divided into four sections @sec-data,@sec-methods,@sec-results, and @sec-references. @sec-data introduces the data used in this analysis including limitations,definitions, and why it's important.@sec-methods explains the statistical methods used for the analysis.@sec-results discusses the results of the analysis as well as what can be gleaned from these results and what are the restrictions. Finally @sec-references contains the citations for any external sources used in the paper.
 
 # Data{#sec-data}
-The California capital expenditure dataset is provided by FIND DATA PROVIDER Each row in this dataset represents the expenditure per capita of a particular city in California at the end of a fiscal year. The key variables are entity name which is the name of the city,fiscal year(July 1 of the current year to June 30 of the next year) which is the year for which each expenditure per capita is calculated ,total expenditure which is the gross expenditure of a particular city over the fiscal year, estimated population which is the population of the city based on the Housing Unit Method which extrapolates population by taking housing units adjusting for occupation and then using that to estimate household population then combining that with estimates for "group quarters population"(essentially everyone in nontraditional households like dorms and prisons) to get the overall population estimate(more details in reference),and expenditures per capita which is the total expenditures divided by estimated population.The data is grouped by city,year, as well as binned into three groups for large medium and small sized cities.The limitations for the dataset are as follows the estimated population does a bad job of measuring homeless because of it's reliance on housing units,the years are limited to a twenty year period from 2003 to 2023,the estimated population can double count those that move until they register their new address, and the expenditures measures are both skewed over the covid period (2020-2023). None of the records are missing. By analyzing how much money is spent by a city over an extended period of time for a cities with a variety of different populations we can reasonably ascertain the relationship between expenditure and the population. However the key assumptions are that the population measurement is accurate relative to other cities in the dataset(meaning if it underestimates or overestimates the population then it does it consistently) and that the cities are correctly reporting their expenditures to the state.
+The California capital expenditure dataset is provided by FIND DATA PROVIDER Each row in this dataset represents the expenditure per capita of a particular city in California at the end of a fiscal year. The key variables are entity name which is the name of the city,fiscal year(July 1 of the current year to June 30 of the next year) which is the year for which each expenditure per capita is calculated ,total expenditure which is the gross expenditure of a particular city over the fiscal year, estimated population which is the population of the city based on the Housing Unit Method which extrapolates population by taking housing units adjusting for occupation and then using that to estimate household population then combining that with estimates for "group quarters population"(essentially everyone in nontraditional households like dorms and prisons) to get the overall population estimate(more details in reference),and expenditures per capita which is the total expenditures divided by estimated population.The data is grouped by city,year, as well as binned into three groups for large medium and small sized cities.The limitations for the dataset are as follows the estimated population does a bad job of measuring homeless because of it's reliance on housing units,the years are limited to a twenty year period from 2003 to 2023,the estimated population can double count those that move until they register their new address, and the expenditures measures are both skewed over the covid period (2020-2023). There are 29 cities missing at least one year of these 8 are missing one year,8 are missing 2 years,4 are missing three years, and 7 are missing 5 or more.Since all the years missing come from the tail end of the collection range(eg if a city is missing 2 years they are always te oldest 2 years so 2003 and 2004) we will be filtering the cities to only those with data from 2005 to 2023 in order to  make it so that all cities have the same amount of data while keeping the vast majority (98%) of the data. We also converted any 0 in the expenditure,expenditure per capita, and total expenditure to null and then filtered out any city with null valuesBy analyzing how much money is spent by a city over an extended period of time for a cities with a variety of different populations we can reasonably ascertain the relationship between expenditure and the population. However the key assumptions are that the population measurement is accurate relative to other cities in the dataset(meaning if it underestimates or overestimates the population then it does it consistently) and that the cities are correctly reporting their expenditures to the state.
 
 [@tidyv]
 per capita expenditure visualizations
@@ -59,7 +83,7 @@ This model is implemented using the lm() function from the R programming languag
 In order to evaluate whether or not high population cities get an economy of scales bonus we use a one sided hypothesis test to determine whether there is a negative association between expenditure per capita(($Y$)) and population(($X$)). The null and alternative hypothesis are as follows
 $H_0: B_1=0$
 $H_1: B_1<0$
-
+I implemented this analysis using the R programming language[@R_language] using the tidyverse package[@tidyv] for data cleaning and plot creation.
 
 
 # Results {#sec-results}
