@@ -57,6 +57,7 @@ The California capital expenditure data set is provided by the California State 
 
 ```{r}
 #| include: false
+#filtering outliers for graph
 graph_avg_expenditure<-filtered_expenditure |> 
   filter(average_expenditure_percapita<quantile(average_expenditure_percapita,0.95))
 
@@ -72,7 +73,7 @@ graph_population<-filtered_expenditure |>
 #| warning: false
 #| message: false
 #| fig-cap: "Histogram of average expenditure of each city."
-
+#creating histogram of per capita expenditure
 ggplot(data=graph_avg_expenditure,aes(x=average_expenditure_percapita))+
   geom_histogram()+
   xlab("Expenditure Per Capita")+
@@ -85,7 +86,7 @@ ggplot(data=graph_avg_expenditure,aes(x=average_expenditure_percapita))+
 #| warning: false
 #| message: false
 #| fig-cap: "Histogram of total expenditure of each city."
-
+#creating histogram of total expenditure
 ggplot(data=graph_total_expenditure,aes(x=average_expenditure))+
   geom_histogram()+
   xlab("Total Expenditure")+
@@ -98,7 +99,7 @@ ggplot(data=graph_total_expenditure,aes(x=average_expenditure))+
 #| message: false
 #| fig-cap: "Histogram of population of each city."
 #| echo: false
-
+#creating histogram of population
 ggplot(data=graph_population,aes(x=average_population))+
   geom_histogram()+
   xlab("Population")+
@@ -126,6 +127,7 @@ I implemented this analysis using the R programming language[@R_language] and th
 #| include: false
 #| warning: false
 #| message: false
+#fitting model to data
 lm_fit<-lm(average_expenditure_percapita~average_population,
            data = filtered_expenditure)
 round(coefficients(lm_fit)[2], 3)
@@ -137,6 +139,7 @@ The estimated slope parameter is $b_1=$ `r round(coefficients(lm_fit)[2], 3)`. I
 #| include: false
 #| warning: false
 #| message: false
+#extracting variables of interest then using them to conduct t test
 lm_summary<-summary(lm_fit)
 b1<-lm_summary$coefficients["average_population","Estimate"]
 b1_se<-lm_summary$coefficients["average_population","Std. Error"]
@@ -149,6 +152,7 @@ Since the t value is greater than the p value we fail to reject the null hypothe
 The model and hypothesis test rely on 5 key assumptions which are that the regression function is linear, the error terms have equal variance, the error terms are independent, the error terms have a mean of zero, and the error terms are normally distributed. Based on the scatter plot of population against average expenditure the regression function does not seem to be linear.The relatively even spread of points above and below the zero line suggest the error terms have a mean of zero(there do seem to be a few more below the line but the ones above have a higher value on average).Equal variance does seem to hold for most of the fitted values but the range of residuals for fitted values below 1400 definitely seems smaller which violates the assumption of equal variance. Based on the curve pattern in the qqplot it can be inferred that the error terms are not normally distributed. Based on the up and down pattern in the residuals vs index plot it can be inferred that the errors are not independent. Since almost all the assumptions necessary for hypothesis testing and most for linear regression were broken(except for the mean of errors being 0) we cannot trust the outcomes from the inference on the slope.
 ```{r}
 #| include: false
+#cleaning data for plots and setting up df for plots
 graph_pop_and_expend<-filtered_expenditure |> 
   filter(average_population<quantile(average_population,0.95) & average_expenditure_percapita<quantile(average_expenditure_percapita,0.95))
 
@@ -172,7 +176,7 @@ resid_index<- data.frame(
 #| message: false
 #| fig-cap: "Scatter plot of population (x-axis) and expenditure per capita (y-axis) for a simple linear regression with expenditure per capita as the response and population as the predictor."
 
-
+# graphing expenditure and population then fitting a line to it
 ggplot(graph_pop_and_expend,
        aes(average_population,average_expenditure_percapita))+
   geom_point()+
@@ -185,6 +189,7 @@ ggplot(graph_pop_and_expend,
 ```{r residuals-fitted}
 #| fig-cap:  "Scatter plot of fitted values (x-axis) and residuals (y-axis) for a simple linear regression with expenditure per capita as the response and population as the predictor."
 #| echo: false
+#creating fitted vs residuals graph
 ggplot(plot_dat, aes(x = fitted, y = resid)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
@@ -196,6 +201,7 @@ ggplot(plot_dat, aes(x = fitted, y = resid)) +
 ```{r qqplot}
 #| fig-cap:  "Quantile-quantile plot of residuals (y-axis) for a simple linear regression with expenditure per capita as the response and population as the predictor."
 #| echo: false 
+# creating qqplot
 ggplot(plot_dat,aes(sample=resid))+
   stat_qq()+
   stat_qq_line()+
@@ -205,10 +211,10 @@ ggplot(plot_dat,aes(sample=resid))+
 ```{r resid}
 #| fig-cap:  "Scatter plot of index (x-axis) and residuals (y-axis) for a simple linear regression with expenditure per capita as the response and population as the predictor."
 #| echo: false
-
+# graphing residual for independence check
 ggplot(resid_index, aes(x = indexx, y = resid)) +
-  geom_point() +                   # points
-  geom_line() +                    # connects points in order
+  geom_point() +                   
+  geom_line() +                    
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(title = "Residuals vs. Index",
        x = "Index",
